@@ -36,6 +36,24 @@ const HomePage: React.FC<HomePageProps> = ({
                 <p className="max-w-xl mx-auto lg:mx-0 text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
                     Convert, Create, Analyze, and Optimize with our suite of 38+ powerful AI, PDF, and SEO utilities. Free, fast, and secure.
                 </p>
+
+                {/* Search Bar */}
+                <div className="max-w-md mx-auto lg:mx-0 relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                    <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
+                        <Search className="w-6 h-6 text-slate-400 ml-3" />
+                        <input 
+                            type="text"
+                            placeholder="Search for tools..."
+                            className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
+                            Search
+                        </div>
+                    </div>
+                </div>
               </div>
               
               {/* Right Column: Graphic */}
@@ -87,30 +105,9 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
       </section>
 
-      {/* Search and Tools Grid */}
+      {/* Tools Grid */}
       <section id="features" className="py-20 flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto mb-16">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
-                <Search className="w-6 h-6 text-slate-400 ml-3" />
-                <input 
-                    type="text"
-                    placeholder="Search for tools..."
-                    className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
-                    Search
-                </div>
-                </div>
-              </div>
-            </div>
-
             <div className="flex items-center justify-between mb-10">
                 <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
                 {activeCategory === 'all' ? 'All Tools' : CATEGORIES.find(c => c.id === activeCategory)?.name}
