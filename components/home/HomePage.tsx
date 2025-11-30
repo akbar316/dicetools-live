@@ -86,41 +86,6 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
       </section>
 
-      {/* Categories Grid */}
-      <section id="categories" className="py-12 bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white text-center mb-10">Explore Our Tool Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              {/* AI-Powered Tools */}
-              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mx-auto mb-4">
-                      <BrainCircuit className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 dark:text-white">AI-Powered Tools</h3>
-                  <p className="text-sm text-slate-500">Leverage AI for content generation, meta tags, and keyword research to streamline your workflow.</p>
-              </div>
-
-              {/* Essential SEO Utilities */}
-              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
-                      <SearchCode className="w-6 h-6 text-amber-600" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 dark:text-white">Essential SEO Utilities</h3>
-                  <p className="text-sm text-slate-500">Optimize your site with tools for robots.txt generation, SERP previews, and finding new blog post ideas.</p>
-              </div>
-
-              {/* Powerful PDF Converters */}
-              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
-                  <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center mx-auto mb-4">
-                      <FileText className="w-6 h-6 text-rose-600" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 dark:text-white">Powerful PDF Converters</h3>
-                  <p className="text-sm text-slate-500">Manage and convert documents with powerful tools for all your PDF needs.</p>
-              </div>
-          </div>
-        </div>
-      </section>
-
       {/* Tools Grid */}
       <section id="features" className="py-20 flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
