@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Search, Command, ArrowRight, Shield, Zap, ShieldCheck } from 'lucide-react';
+import { Search, Command, ArrowRight, Shield, Zap } from 'lucide-react';
 import { CATEGORIES } from '../../data/categories';
 import { TOOLS } from '../../data/tools-registry';
 import { FAQS } from '../../data/faqs';
 import { Tool, CategoryId } from '../../types/index';
+import Dice from './Dice';
 
 interface HomePageProps {
   searchQuery: string;
@@ -18,8 +19,6 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ 
   searchQuery, setSearchQuery, activeCategory, setActiveCategory, filteredTools, navigateToTool 
 }) => {
-  const previewTool = TOOLS.find(t => t.id === 'ai-grammar')!;
-
   return (
     <>
       {/* Hero Section */}
@@ -68,44 +67,9 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               </div>
               
-              {/* Right Column: Design */}
-              <div className="hidden lg:block relative">
-                <div className="absolute -inset-4 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-3xl blur-2xl"></div>
-
-                <div className="relative bg-slate-800/50 backdrop-blur-md border border-slate-700 rounded-2xl p-4 shadow-2xl">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    
-                    {/* Tool Preview */}
-                    <div className="bg-slate-900/70 rounded-lg p-6">
-                      <div className="flex items-start gap-4 mb-6">
-                        <div className="p-2 rounded-lg bg-slate-700">
-                          <previewTool.icon className="w-5 h-5 text-primary-400" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-white">{previewTool.name}</h4>
-                          <p className="text-sm text-slate-400">{previewTool.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        {/* Before */}
-                        <div>
-                          <p className="text-xs font-semibold text-slate-400 mb-2">BEFORE</p>
-                          <p className="text-sm text-slate-300 p-4 bg-slate-800 rounded-md font-mono">"helo world, this is a testt of my grammer skillz"</p>
-                        </div>
-                        {/* After */}
-                        <div>
-                          <p className="text-xs font-semibold text-green-400 mb-2">AFTER (FIXED)</p>
-                          <p className="text-sm text-green-300 p-4 bg-green-900/20 border border-green-500/30 rounded-md font-mono">"Hello world, this is a test of my grammar skills."</p>
-                        </div>
-                      </div>
-                    </div>
-                </div>
+              {/* Right Column: 3D Dice */}
+              <div className="hidden lg:flex justify-center items-center h-full">
+                <Dice />
               </div>
             </div>
           </div>
@@ -212,21 +176,21 @@ const HomePage: React.FC<HomePageProps> = ({
                   <Shield className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 dark:text-white">Secure & Private</h3>
-                  <p className="text-slate-500 text-sm">We don't store your files. All processing happens on secure servers or your browser.</p>
+                  <p className="text-sm text-slate-500">We don't store your files. All processing happens on secure servers or your browser.</p>
               </div>
               <div className="text-center p-6">
                   <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-4">
                   <Command className="w-6 h-6 text-blue-600" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 dark:text-white">Powered by Gemini</h3>
-                  <p className="text-slate-500 text-sm">Leveraging Google's advanced AI for high-quality generation and analysis.</p>
+                  <p className="text-sm text-slate-500">Leveraging Google's advanced AI for high-quality generation and analysis.</p>
               </div>
               <div className="text-center p-6">
                   <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
                   <Zap className="w-6 h-6 text-purple-600" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 dark:text-white">Lightning Fast</h3>
-                  <p className="text-slate-500 text-sm">Optimized performance for instant results, even on mobile devices.</p>
+                  <p className="text-sm text-slate-500">Optimized performance for instant results, even on mobile devices.</p>
               </div>
               </div>
           </div>

@@ -12,6 +12,7 @@ import SignInPage from './components/auth/SignInPage';
 import SignUpPage from './components/auth/SignUpPage';
 import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
 import { useAuth } from './contexts/AuthContext';
+import CookiePolicyPage from './components/legal/CookiePolicyPage';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -20,7 +21,7 @@ const App: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<Tool | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut, loading } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -37,6 +38,8 @@ const App: React.FC = () => {
       setCurrentPage('signup');
     } else if (page === 'forgot-password') {
       setCurrentPage('forgot-password');
+    } else if (page === 'cookie-policy') {
+      setCurrentPage('cookie-policy');
     } else if (toolId) {
       const tool = TOOLS.find(t => t.id === toolId);
       if (tool) {
@@ -67,6 +70,9 @@ const App: React.FC = () => {
       } else if (page === 'forgot-password') {
         setCurrentPage('forgot-password');
         setCurrentTool(null);
+      } else if (page === 'cookie-policy') {
+        setCurrentPage('cookie-policy');
+        setCurrentTool(null);
       } else if (toolId) {
         const tool = TOOLS.find(t => t.id === toolId);
         if (tool) {
@@ -96,6 +102,8 @@ const App: React.FC = () => {
       document.title = 'Sign Up - Dicetools.online';
     } else if (currentPage === 'forgot-password') {
       document.title = 'Forgot Password - Dicetools.online';
+    } else if (currentPage === 'cookie-policy') {
+      document.title = 'Cookie Policy - Dicetools.online';
     } else {
       document.title = 'Dicetools.online - Smart Tools for Everything';
     }
@@ -130,6 +138,7 @@ const App: React.FC = () => {
   const navigateToSignIn = () => navigateTo('signin');
   const navigateToSignUp = () => navigateTo('signup');
   const navigateToForgotPassword = () => navigateTo('forgot-password');
+  const navigateToCookiePolicy = () => navigateTo('cookie-policy');
   const handleSignOut = () => {
     signOut();
     navigateHome();
@@ -143,6 +152,14 @@ const App: React.FC = () => {
   });
 
   const renderContent = () => {
+    if (loading) {
+        return (
+        <div className="flex-grow flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-primary-500 border-dashed rounded-full animate-spin"></div>
+        </div>
+        )
+    }
+
     if (isAuthenticated && (currentPage === 'signin' || currentPage === 'signup' || currentPage === 'forgot-password')) {
       navigateHome();
       return null;
@@ -164,6 +181,8 @@ const App: React.FC = () => {
         return <PrivacyPage />;
       case 'contact':
         return <ContactPage />;
+      case 'cookie-policy':
+        return <CookiePolicyPage />;
       case 'signin':
         return (
           <SignInPage
@@ -205,7 +224,12 @@ const App: React.FC = () => {
         onSignOut={handleSignOut}
       />
       {renderContent()}
-      <Footer onNavigateHome={navigateHome} onNavigateToPrivacy={navigateToPrivacy} onNavigateToContact={navigateToContact} />
+      <Footer 
+        onNavigateHome={navigateHome} 
+        onNavigateToPrivacy={navigateToPrivacy} 
+        onNavigateToContact={navigateToContact} 
+        onNavigateToCookiePolicy={navigateToCookiePolicy} 
+      />
     </div>
   );
 };
