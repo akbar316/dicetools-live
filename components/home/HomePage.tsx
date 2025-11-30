@@ -37,15 +37,11 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
-              Smart Tools for <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-secondary-600">
-              Everything You Do
-              </span>
+            The Ultimate Toolkit: 38+ Free AI, PDF, SEO & Text Utility Tools
           </h1>
           
           <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
-              Convert, Create, Analyze, and Optimize with our suite of {TOOLS.length}+ powerful tools. 
-              Free, fast, and secure. No sign-up required.
+            Dicetools offers a comprehensive suite of 38+ free online tools designed to boost productivity and streamline your digital tasks. From powerful AI tools and a complete SEO tools suite to essential PDF utilities and text analysis, we have everything you need in one place. Fast, secure, and no sign-up required.
           </p>
 
           {/* Search Bar */}
@@ -101,14 +97,17 @@ const HomePage: React.FC<HomePageProps> = ({
       {/* Tools Grid */}
       <section id="features" className="py-20 flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
-              {activeCategory === 'all' ? 'All Tools' : CATEGORIES.find(c => c.id === activeCategory)?.name}
-              </h2>
-              <span className="text-sm text-slate-500 dark:text-slate-400">
-              Showing {filteredTools.length} results
-              </span>
-          </div>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Introducing Our Smart AI Tools</h2>
+            </div>
+            <div className="flex items-center justify-between mb-10">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+                {activeCategory === 'all' ? 'All Tools' : CATEGORIES.find(c => c.id === activeCategory)?.name}
+                </h2>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                Showing {filteredTools.length} results
+                </span>
+            </div>
 
           {filteredTools.length === 0 ? (
               <div className="text-center py-20">
@@ -158,8 +157,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <section className="py-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Why Dicetools?</h2>
-              <p className="text-slate-500 max-w-2xl mx-auto">We provide the most accessible, high-performance tools on the web.</p>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Essential PDF and Document Utilities</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -191,7 +189,7 @@ const HomePage: React.FC<HomePageProps> = ({
       {/* FAQ */}
       <section id="faq" className="py-20 bg-slate-50 dark:bg-slate-950">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-10 text-center">Frequently Asked Questions</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-10 text-center">SEO, Developer, and Student Tools in One Place</h2>
               <div className="space-y-6">
               {FAQS.map((faq, i) => (
                   <div key={i} className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
