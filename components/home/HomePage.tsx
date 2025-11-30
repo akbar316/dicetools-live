@@ -75,14 +75,25 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
       </section>
-      
-      {/* Smart Tools for Every Task */}
-      <section className="py-20">
+
+      {/* Categories Grid */}
+      <section id="categories" className="py-12 bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">Smart Tools for Every Task</h2>
-                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">From content creation to technical optimization, our suite of online utilities has you covered.</p>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <button 
+              onClick={() => setActiveCategory('all')}
+              className={`flex items-center justify-center text-center p-4 rounded-xl transition-all font-semibold ${activeCategory === 'all' ? 'bg-primary-500 text-white shadow-lg' : 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                  All Tools
+              </button>
+              {CATEGORIES.map((cat) => (
+              <button 
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center justify-center text-center p-4 rounded-xl transition-all font-semibold ${activeCategory === cat.id ? 'bg-primary-500 text-white shadow-lg' : 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                  {cat.name}
+              </button>
+              ))}
+          </div>
           </div>
       </section>
 
