@@ -1,17 +1,18 @@
 
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { UserPlus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebase';
 
-const SignUpPage: React.FC = () => {
+interface SignUpPageProps {
+  onNavigateToSignIn: () => void;
+  onSignUpSuccess: () => void;
+}
+
+const SignUpPage: React.FC<SignUpPageProps> = ({ onNavigateToSignIn, onSignUpSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { currentUser } = useAuth();
-  const navigate = useNavigate();
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +22,7 @@ const SignUpPage: React.FC = () => {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate('/');
+      onSignUpSuccess();
     } catch (error) {
       console.error('Error signing up with email and password', error);
       alert('Error signing up. Please try again.');
@@ -32,16 +33,11 @@ const SignUpPage: React.FC = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      navigate('/');
+      onSignUpSuccess();
     } catch (error) {
       console.error('Error signing in with Google', error);
     }
   };
-
-  if (currentUser) {
-    navigate('/');
-    return null;
-  }
 
   return (
     <div className="max-w-md mx-auto my-12 p-8 border rounded-2xl shadow-sm bg-white dark:bg-slate-900 dark:border-slate-800">
@@ -79,6 +75,14 @@ const SignUpPage: React.FC = () => {
         </svg>
         Sign up with Google
       </button>
+      <div className="mt-6 text-center">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Already have an account?{' '}
+          <button onClick={onNavigateToSignIn} className="font-bold text-primary-600 hover:underline">
+            Sign In
+          </button>
+        </p>
+      </div>
     </div>
   );
 };

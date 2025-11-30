@@ -1,22 +1,24 @@
 
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebase';
 
-const SignInPage: React.FC = () => {
+interface SignInPageProps {
+  onNavigateToSignUp: () => void;
+  onNavigateToForgotPassword: () => void;
+  onSignInSuccess: () => void;
+}
+
+const SignInPage: React.FC<SignInPageProps> = ({ onNavigateToSignUp, onNavigateToForgotPassword, onSignInSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { currentUser } = useAuth();
-  const navigate = useNavigate();
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
+      onSignInSuccess();
     } catch (error) {
       console.error('Error signing in with email and password', error);
       alert('Error signing in. Please check your credentials and try again.');
@@ -27,16 +29,11 @@ const SignInPage: React.FC = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      navigate('/');
+      onSignInSuccess();
     } catch (error) {
       console.error('Error signing in with Google', error);
     }
   };
-
-  if (currentUser) {
-    navigate('/');
-    return null;
-  }
 
   return (
     <div className="max-w-md mx-auto my-12 p-8 border rounded-2xl shadow-sm bg-white dark:bg-slate-900 dark:border-slate-800">
@@ -46,26 +43,26 @@ const SignInPage: React.FC = () => {
         <form onSubmit={handleEmailSignIn} className="space-y-4">
             <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
-                <input 
-                    type="email" 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    className="w-full p-3 mt-1 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
-                    required 
+                <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className="w-full p-3 mt-1 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    required
                 />
             </div>
             <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-                <input 
-                    type="password" 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    className="w-full p-3 mt-1 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
-                    required 
+                <input
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="w-full p-3 mt-1 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    required
                 />
             </div>
             <div className="text-right">
-              <a href="/forgot-password" className="text-sm text-primary-600 hover:underline">Forgot Password?</a>
+              <button type="button" onClick={onNavigateToForgotPassword} className="text-sm text-primary-600 hover:underline">Forgot Password?</button>
             </div>
             <button type="submit" className="w-full py-3 bg-primary-600 text-white rounded-lg font-bold flex items-center justify-center gap-2">
                 <LogIn className="w-5 h-5" /> Sign In
@@ -85,6 +82,14 @@ const SignInPage: React.FC = () => {
             </svg>
             Sign in with Google
         </button>
+        <div className="mt-6 text-center">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+                Don't have an account?{' '}
+                <button onClick={onNavigateToSignUp} className="font-bold text-primary-600 hover:underline">
+                    Sign Up
+                </button>
+            </p>
+        </div>
     </div>
   );
 };

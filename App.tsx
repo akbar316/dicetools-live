@@ -10,6 +10,7 @@ import PrivacyPage from './components/PrivacyPage';
 import ContactPage from './components/ContactPage';
 import SignInPage from './components/auth/SignInPage';
 import SignUpPage from './components/auth/SignUpPage';
+import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -18,10 +19,9 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentTool, setCurrentTool] = useState<Tool | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'tool', 'privacy', 'contact', 'signin', 'signup'
+  const [currentPage, setCurrentPage] = useState('home');
   const { isAuthenticated, signOut } = useAuth();
 
-  // Initialize Route
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const toolId = params.get('tool');
@@ -35,6 +35,8 @@ const App: React.FC = () => {
       setCurrentPage('signin');
     } else if (page === 'signup') {
       setCurrentPage('signup');
+    } else if (page === 'forgot-password') {
+      setCurrentPage('forgot-password');
     } else if (toolId) {
       const tool = TOOLS.find(t => t.id === toolId);
       if (tool) {
@@ -62,6 +64,9 @@ const App: React.FC = () => {
       } else if (page === 'signup') {
         setCurrentPage('signup');
         setCurrentTool(null);
+      } else if (page === 'forgot-password') {
+        setCurrentPage('forgot-password');
+        setCurrentTool(null);
       } else if (toolId) {
         const tool = TOOLS.find(t => t.id === toolId);
         if (tool) {
@@ -78,7 +83,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Dynamic Title Update
   useEffect(() => {
     if (currentPage === 'tool' && currentTool) {
       document.title = `${currentTool.name} - Dicetools.online`;
@@ -90,6 +94,8 @@ const App: React.FC = () => {
       document.title = 'Sign In - Dicetools.online';
     } else if (currentPage === 'signup') {
       document.title = 'Sign Up - Dicetools.online';
+    } else if (currentPage === 'forgot-password') {
+      document.title = 'Forgot Password - Dicetools.online';
     } else {
       document.title = 'Dicetools.online - Smart Tools for Everything';
     }
@@ -103,7 +109,6 @@ const App: React.FC = () => {
     }
   }, [darkMode]);
 
-  // Routing Helpers
   const navigateTo = (page: string, tool: Tool | null = null) => {
     const url = new URL(window.location.href);
     url.search = '';
@@ -115,7 +120,7 @@ const App: React.FC = () => {
     }
     window.history.pushState({}, '', url);
     setCurrentPage(page);
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   };
 
   const navigateToTool = (tool: Tool) => navigateTo('tool', tool);
@@ -124,13 +129,12 @@ const App: React.FC = () => {
   const navigateToContact = () => navigateTo('contact');
   const navigateToSignIn = () => navigateTo('signin');
   const navigateToSignUp = () => navigateTo('signup');
+  const navigateToForgotPassword = () => navigateTo('forgot-password');
   const handleSignOut = () => {
     signOut();
     navigateHome();
   };
 
-
-  // Filter Tools
   const filteredTools = TOOLS.filter(tool => {
     const matchesCategory = activeCategory === 'all' || tool.categoryId === activeCategory;
     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -139,6 +143,11 @@ const App: React.FC = () => {
   });
 
   const renderContent = () => {
+    if (isAuthenticated && (currentPage === 'signin' || currentPage === 'signup' || currentPage === 'forgot-password')) {
+      navigateHome();
+      return null;
+    }
+
     switch (currentPage) {
       case 'tool':
         return currentTool && (
@@ -156,9 +165,17 @@ const App: React.FC = () => {
       case 'contact':
         return <ContactPage />;
       case 'signin':
-        return <SignInPage />;
+        return (
+          <SignInPage
+            onNavigateToSignUp={navigateToSignUp}
+            onNavigateToForgotPassword={navigateToForgotPassword}
+            onSignInSuccess={navigateHome}
+          />
+        );
       case 'signup':
-        return <SignUpPage />;
+        return <SignUpPage onNavigateToSignIn={navigateToSignIn} onSignUpSuccess={navigateHome} />;
+      case 'forgot-password':
+        return <ForgotPasswordPage onNavigateToSignIn={navigateToSignIn} />;
       default:
         return (
           <HomePage
@@ -173,10 +190,8 @@ const App: React.FC = () => {
     }
   };
 
-
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-primary-500/30 selection:text-primary-900">
-
       <Header
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -189,13 +204,8 @@ const App: React.FC = () => {
         isAuthenticated={isAuthenticated}
         onSignOut={handleSignOut}
       />
-
-      {/* Main Content Router */}
       {renderContent()}
-
-
       <Footer onNavigateHome={navigateHome} onNavigateToPrivacy={navigateToPrivacy} onNavigateToContact={navigateToContact} />
-
     </div>
   );
 };
