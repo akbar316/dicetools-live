@@ -5,6 +5,7 @@ import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/a
 
 interface AuthContextType {
   currentUser: User | null;
+  isAuthenticated: boolean;
   loading: boolean;
   signOut: () => void;
 }
@@ -13,11 +14,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
+      setIsAuthenticated(!!user);
       setLoading(false);
     });
 
@@ -25,12 +28,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const signOut = () => {
-    firebaseSignOut(auth);
+    firebaseSignOut(auth).then(() => {
+      setIsAuthenticated(false);
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, signOut }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ currentUser, isAuthenticated, loading, signOut }}>
+      {children}
     </AuthContext.Provider>
   );
 };
