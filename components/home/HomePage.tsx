@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Search, Command, ArrowRight, Shield, Zap } from 'lucide-react';
 import { CATEGORIES } from '../../data/categories';
@@ -37,11 +38,11 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
-            The Ultimate Toolkit: 38+ Free AI, PDF, SEO & Text Utility Tools
+            Unlock Your Potential with Our Suite of Smart Tools
           </h1>
           
           <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
-            Dicetools offers a comprehensive suite of 38+ free online tools designed to boost productivity and streamline your digital tasks. From powerful AI tools and a complete SEO tools suite to essential PDF utilities and text analysis, we have everything you need in one place. Fast, secure, and no sign-up required.
+            Dicetools offers a comprehensive collection of free online tools to boost your productivity. Whether you need AI-powered assistance, SEO analysis, or PDF utilities, we have everything you need in one place. Fast, secure, and easy to use.
           </p>
 
           {/* Search Bar */}
@@ -51,7 +52,7 @@ const HomePage: React.FC<HomePageProps> = ({
               <Search className="w-6 h-6 text-slate-400 ml-3" />
               <input 
                   type="text"
-                  placeholder="Search tools (e.g., 'PDF', 'Summarizer', 'Password')..."
+                  placeholder="Search for tools..."
                   className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -189,7 +190,7 @@ const HomePage: React.FC<HomePageProps> = ({
       {/* FAQ */}
       <section id="faq" className="py-20 bg-slate-50 dark:bg-slate-950">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-10 text-center">SEO, Developer, and Student Tools in One Place</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-10 text-center">Your Questions, Answered</h2>
               <div className="space-y-6">
               {FAQS.map((faq, i) => (
                   <div key={i} className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
