@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Command, ArrowRight, Shield, Zap } from 'lucide-react';
+import { Search, Command, ArrowRight, Shield, Zap, BrainCircuit, FileText, SearchCode } from 'lucide-react';
 import { CATEGORIES } from '../../data/categories';
 import { TOOLS } from '../../data/tools-registry';
 import { FAQS } from '../../data/faqs';
@@ -75,34 +75,50 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
       </section>
+      
+      {/* Smart Tools for Every Task */}
+      <section className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">Smart Tools for Every Task</h2>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">From content creation to technical optimization, our suite of online utilities has you covered.</p>
+              </div>
+          </div>
+      </section>
 
       {/* Categories Grid */}
       <section id="categories" className="py-12 bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-              <button
-              onClick={() => setActiveCategory('all')}
-              className={`p-4 rounded-xl flex flex-col items-center gap-3 transition-all ${activeCategory === 'all' ? 'bg-white dark:bg-slate-800 shadow-md ring-2 ring-primary-500' : 'hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm'}`}
-              >
-              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
-                  <Command className="w-5 h-5 text-slate-600 dark:text-slate-300" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">All Tools</span>
-              </button>
-              {CATEGORIES.map((cat) => (
-              <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`p-4 rounded-xl flex flex-col items-center gap-3 transition-all ${activeCategory === cat.id ? 'bg-white dark:bg-slate-800 shadow-md ring-2 ring-primary-500' : 'hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm'}`}
-              >
-                  <div className={`w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center ${cat.color}`}>
-                  <cat.icon className="w-5 h-5" />
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white text-center mb-10">Explore Our Tool Categories</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              {/* AI-Powered Tools */}
+              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mx-auto mb-4">
+                      <BrainCircuit className="w-6 h-6 text-indigo-600" />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{cat.name}</span>
-              </button>
-              ))}
+                  <h3 className="text-xl font-bold mb-2 dark:text-white">AI-Powered Tools</h3>
+                  <p className="text-sm text-slate-500">Leverage AI for content generation, meta tags, and keyword research to streamline your workflow.</p>
+              </div>
+
+              {/* Essential SEO Utilities */}
+              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
+                      <SearchCode className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 dark:text-white">Essential SEO Utilities</h3>
+                  <p className="text-sm text-slate-500">Optimize your site with tools for robots.txt generation, SERP previews, and finding new blog post ideas.</p>
+              </div>
+
+              {/* Powerful PDF Converters */}
+              <div className="p-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-6 h-6 text-rose-600" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 dark:text-white">Powerful PDF Converters</h3>
+                  <p className="text-sm text-slate-500">Manage and convert documents with powerful tools for all your PDF needs.</p>
+              </div>
           </div>
-          </div>
+        </div>
       </section>
 
       {/* Tools Grid */}
@@ -165,7 +181,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <section className="py-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Essential PDF and Document Utilities</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Why Choose DiceTools?</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
