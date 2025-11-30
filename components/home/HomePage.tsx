@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Command, ArrowRight, Shield, Zap } from 'lucide-react';
+import { Search, Command, ArrowRight, Shield, Zap, ShieldCheck } from 'lucide-react';
 import { CATEGORIES } from '../../data/categories';
 import { TOOLS } from '../../data/tools-registry';
 import { FAQS } from '../../data/faqs';
@@ -18,51 +18,96 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ 
   searchQuery, setSearchQuery, activeCategory, setActiveCategory, filteredTools, navigateToTool 
 }) => {
+  const previewTool = TOOLS.find(t => t.id === 'ai-grammar')!;
+
   return (
     <>
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
-          {/* Background Elements */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-500/20 rounded-full blur-[100px]" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary-500/20 rounded-full blur-[100px]" />
+            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-[120px]" />
+            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-secondary-500/10 rounded-full blur-[120px]" />
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs font-medium text-primary-600 dark:text-primary-400 mb-8 animate-fade-in">
-              <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-              </span>
-              New AI Tools Added
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
-            Unlock Your Potential with Our Suite of Smart Tools
-          </h1>
-          
-          <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
-            Dicetools offers a comprehensive collection of free online tools to boost your productivity. Whether you need AI-powered assistance, SEO analysis, or PDF utilities, we have everything you need in one place. Fast, secure, and easy to use.
-          </p>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left Column: Content */}
+              <div className="text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs font-medium text-primary-600 dark:text-primary-400 mb-8 animate-fade-in">
+                    <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                    </span>
+                    Over 38+ Free Tools
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
+                  Smart Tools for Every Task
+                </h1>
+                
+                <p className="max-w-xl mx-auto lg:mx-0 text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
+                  Your one-stop suite of free, powerful online tools for AI, SEO, PDFs, and more. Boost your productivity instantly.
+                </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
-              <Search className="w-6 h-6 text-slate-400 ml-3" />
-              <input 
-                  type="text"
-                  placeholder="Search for tools..."
-                  className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {/* Fake Search Button (Search is realtime) */}
-              <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
-                  Search
+                {/* Search Bar */}
+                <div className="max-w-lg mx-auto lg:mx-0 relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                    <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
+                    <Search className="w-6 h-6 text-slate-400 ml-3" />
+                    <input 
+                        type="text"
+                        placeholder="Search for tools..."
+                        className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
+                        Search
+                    </div>
+                    </div>
+                </div>
               </div>
+              
+              {/* Right Column: Design */}
+              <div className="hidden lg:block relative">
+                <div className="absolute -inset-4 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-3xl blur-2xl"></div>
+
+                <div className="relative bg-slate-800/50 backdrop-blur-md border border-slate-700 rounded-2xl p-4 shadow-2xl">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    
+                    {/* Tool Preview */}
+                    <div className="bg-slate-900/70 rounded-lg p-6">
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className="p-2 rounded-lg bg-slate-700">
+                          <previewTool.icon className="w-5 h-5 text-primary-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white">{previewTool.name}</h4>
+                          <p className="text-sm text-slate-400">{previewTool.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        {/* Before */}
+                        <div>
+                          <p className="text-xs font-semibold text-slate-400 mb-2">BEFORE</p>
+                          <p className="text-sm text-slate-300 p-4 bg-slate-800 rounded-md font-mono">"helo world, this is a testt of my grammer skillz"</p>
+                        </div>
+                        {/* After */}
+                        <div>
+                          <p className="text-xs font-semibold text-green-400 mb-2">AFTER (FIXED)</p>
+                          <p className="text-sm text-green-300 p-4 bg-green-900/20 border border-green-500/30 rounded-md font-mono">"Hello world, this is a test of my grammar skills."</p>
+                        </div>
+                      </div>
+                    </div>
+                </div>
               </div>
-          </div>
+            </div>
           </div>
       </section>
 
