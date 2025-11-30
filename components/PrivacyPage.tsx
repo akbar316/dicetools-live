@@ -1,4 +1,4 @@
-'''
+
 import React from 'react';
 
 const PrivacyPage: React.FC = () => {
@@ -86,4 +86,3 @@ const PrivacyPage: React.FC = () => {
 };
 
 export default PrivacyPage;
-'''
