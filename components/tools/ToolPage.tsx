@@ -1,6 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { Tool, CategoryId } from '../../types/index';
 import ToolWrapper from './ToolWrapper';
+import { useAuth } from '../../contexts/AuthContext';
+import SignInPage from '../auth/SignInPage';
 
 // Import Specific Tool Components
 import AiTextTool from './specific/AiTextTool';
@@ -13,7 +16,7 @@ import PdfToImageTool from './specific/PdfToImageTool';
 import PdfMergeTool from './specific/PdfMergeTool';
 import PdfCompressTool from './specific/PdfCompressTool';
 import PdfEditorTool from './specific/PdfEditorTool';
-import RegexTesterTool from './specific/RegexTesterTool'; 
+import RegexTesterTool from './specific/RegexTesterTool';
 import SerpPreviewTool from './specific/SerpPreviewTool';
 import SeoContentAnalyzerTool from './specific/SeoContentAnalyzerTool';
 import BacklinkCheckerTool from './specific/BacklinkCheckerTool';
@@ -34,7 +37,8 @@ interface ToolPageProps {
 }
 
 const ToolPage: React.FC<ToolPageProps> = ({ tool, onBack, onSelectCategory }) => {
-  
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [tool]);
@@ -103,6 +107,10 @@ const ToolPage: React.FC<ToolPageProps> = ({ tool, onBack, onSelectCategory }) =
         );
     }
   };
+
+  if (!isAuthenticated) {
+    return <SignInPage />;
+  }
 
   return (
     <ToolWrapper tool={tool} onBack={onBack} onSelectCategory={onSelectCategory}>

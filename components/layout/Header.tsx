@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Menu, Moon, Sun } from 'lucide-react';
+import { Menu, Moon, Sun, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Tool } from '../../types/index';
 
 interface HeaderProps {
@@ -9,10 +10,23 @@ interface HeaderProps {
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (value: boolean) => void;
   onNavigateHome: () => void;
+  onNavigateToSignIn: () => void;
+  onNavigateToSignUp: () => void;
+  isAuthenticated: boolean;
+  onSignOut: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  darkMode, setDarkMode, currentTool, mobileMenuOpen, setMobileMenuOpen, onNavigateHome 
+  darkMode, 
+  setDarkMode, 
+  currentTool, 
+  mobileMenuOpen, 
+  setMobileMenuOpen, 
+  onNavigateHome,
+  onNavigateToSignIn,
+  onNavigateToSignUp,
+  isAuthenticated,
+  onSignOut
 }) => {
   return (
     <>
@@ -30,14 +44,34 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-4">
               {!currentTool && (
-                  <>
+                  <div className="flex items-center gap-8">
                     <a href="#categories" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">Categories</a>
                     <a href="#features" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">Featured</a>
                     <a href="#faq" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">FAQ</a>
-                  </>
+                  </div>
               )}
+              
+              <div className="flex items-center gap-2">
+                {isAuthenticated ? (
+                    <button onClick={onSignOut} className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                    </button>
+                ) : (
+                    <>
+                        <button onClick={onNavigateToSignIn} className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">
+                           <LogIn className="w-4 h-4" />
+                           <span>Sign In</span>
+                        </button>
+                        <button onClick={onNavigateToSignUp} className="px-4 py-2 text-sm font-bold text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2">
+                           <UserPlus className="w-4 h-4" />
+                           <span>Sign Up</span>
+                        </button>
+                    </>
+                )}
+              </div>
               
               <button 
                 onClick={() => setDarkMode(!darkMode)}
@@ -49,28 +83,48 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-4">
+            <div className="md:hidden flex items-center gap-2">
                <button 
                 onClick={() => setDarkMode(!darkMode)}
                 className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
               >
                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
-              {!currentTool && (
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-600 dark:text-slate-300">
-                    <Menu className="w-6 h-6" />
-                </button>
-              )}
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-600 dark:text-slate-300">
+                  <Menu className="w-6 h-6" />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Mobile Nav Dropdown */}
-        {mobileMenuOpen && !currentTool && (
+        {mobileMenuOpen && (
           <div className="md:hidden glass border-t border-slate-200 dark:border-slate-800 p-4 space-y-4">
-             <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">Categories</a>
-             <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">All Tools</a>
-             <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">FAQ</a>
+             {!currentTool && (
+                <>
+                    <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">Categories</a>
+                    <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">All Tools</a>
+                    <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">FAQ</a>
+                    <hr className="border-slate-200 dark:border-slate-800"/>
+                </>
+             )}
+             {isAuthenticated ? (
+                <button onClick={() => { onSignOut(); setMobileMenuOpen(false); }} className="w-full text-left flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                </button>
+             ) : (
+                <>
+                    <button onClick={() => { onNavigateToSignIn(); setMobileMenuOpen(false); }} className="w-full text-left flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                        <LogIn className="w-4 h-4" />
+                        Sign In
+                    </button>
+                    <button onClick={() => { onNavigateToSignUp(); setMobileMenuOpen(false); }} className="w-full text-left flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                        <UserPlus className="w-4 h-4" />
+                        Sign Up
+                    </button>
+                </>
+             )}
           </div>
         )}
       </nav>

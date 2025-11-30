@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { TOOLS } from './data/tools-registry';
 import { Tool, CategoryId } from './types/index';
@@ -5,6 +6,11 @@ import ToolPage from './components/tools/ToolPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './components/home/HomePage';
+import PrivacyPage from './components/PrivacyPage';
+import ContactPage from './components/ContactPage';
+import SignInPage from './components/auth/SignInPage';
+import SignUpPage from './components/auth/SignUpPage';
+import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -12,27 +18,60 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentTool, setCurrentTool] = useState<Tool | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'tool', 'privacy', 'contact', 'signin', 'signup'
+  const { isAuthenticated, signOut } = useAuth();
 
   // Initialize Route
   useEffect(() => {
-    // URL Route check
     const params = new URLSearchParams(window.location.search);
     const toolId = params.get('tool');
-    if (toolId) {
+    const page = params.get('page');
+
+    if (page === 'privacy') {
+      setCurrentPage('privacy');
+    } else if (page === 'contact') {
+      setCurrentPage('contact');
+    } else if (page === 'signin') {
+      setCurrentPage('signin');
+    } else if (page === 'signup') {
+      setCurrentPage('signup');
+    } else if (toolId) {
       const tool = TOOLS.find(t => t.id === toolId);
-      if (tool) setCurrentTool(tool);
+      if (tool) {
+        setCurrentTool(tool);
+        setCurrentPage('tool');
+      }
+    } else {
+      setCurrentPage('home');
     }
 
-    // Listen to browser back button
     const handlePopState = () => {
-        const params = new URLSearchParams(window.location.search);
-        const toolId = params.get('tool');
-        if (toolId) {
-          const tool = TOOLS.find(t => t.id === toolId);
-          if (tool) setCurrentTool(tool);
-        } else {
-            setCurrentTool(null);
+      const params = new URLSearchParams(window.location.search);
+      const toolId = params.get('tool');
+      const page = params.get('page');
+
+      if (page === 'privacy') {
+        setCurrentPage('privacy');
+        setCurrentTool(null);
+      } else if (page === 'contact') {
+        setCurrentPage('contact');
+        setCurrentTool(null);
+      } else if (page === 'signin') {
+        setCurrentPage('signin');
+        setCurrentTool(null);
+      } else if (page === 'signup') {
+        setCurrentPage('signup');
+        setCurrentTool(null);
+      } else if (toolId) {
+        const tool = TOOLS.find(t => t.id === toolId);
+        if (tool) {
+          setCurrentTool(tool);
+          setCurrentPage('tool');
         }
+      } else {
+        setCurrentTool(null);
+        setCurrentPage('home');
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -41,12 +80,20 @@ const App: React.FC = () => {
 
   // Dynamic Title Update
   useEffect(() => {
-    if (currentTool) {
+    if (currentPage === 'tool' && currentTool) {
       document.title = `${currentTool.name} - Dicetools.online`;
+    } else if (currentPage === 'privacy') {
+      document.title = 'Privacy Policy - Dicetools.online';
+    } else if (currentPage === 'contact') {
+      document.title = 'Contact Us - Dicetools.online';
+    } else if (currentPage === 'signin') {
+      document.title = 'Sign In - Dicetools.online';
+    } else if (currentPage === 'signup') {
+      document.title = 'Sign Up - Dicetools.online';
     } else {
-      document.title = "Dicetools.online - Smart Tools for Everything";
+      document.title = 'Dicetools.online - Smart Tools for Everything';
     }
-  }, [currentTool]);
+  }, [currentPage, currentTool]);
 
   useEffect(() => {
     if (darkMode) {
@@ -57,54 +104,64 @@ const App: React.FC = () => {
   }, [darkMode]);
 
   // Routing Helpers
-  const navigateToTool = (tool: Tool) => {
-      setCurrentTool(tool);
-      const url = new URL(window.location.href);
+  const navigateTo = (page: string, tool: Tool | null = null) => {
+    const url = new URL(window.location.href);
+    url.search = '';
+    if (page === 'tool' && tool) {
       url.searchParams.set('tool', tool.id);
-      window.history.pushState({}, '', url);
-      window.scrollTo(0,0);
+      setCurrentTool(tool);
+    } else if (page) {
+      url.searchParams.set('page', page);
+    }
+    window.history.pushState({}, '', url);
+    setCurrentPage(page);
+    window.scrollTo(0,0);
   };
 
-  const navigateHome = () => {
-      setCurrentTool(null);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('tool');
-      window.history.pushState({}, '', url);
-      window.scrollTo(0,0);
+  const navigateToTool = (tool: Tool) => navigateTo('tool', tool);
+  const navigateHome = () => navigateTo('home');
+  const navigateToPrivacy = () => navigateTo('privacy');
+  const navigateToContact = () => navigateTo('contact');
+  const navigateToSignIn = () => navigateTo('signin');
+  const navigateToSignUp = () => navigateTo('signup');
+  const handleSignOut = () => {
+    signOut();
+    navigateHome();
   };
+
 
   // Filter Tools
   const filteredTools = TOOLS.filter(tool => {
     const matchesCategory = activeCategory === 'all' || tool.categoryId === activeCategory;
-    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           tool.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-primary-500/30 selection:text-primary-900">
-      
-      <Header 
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        currentTool={currentTool}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-        onNavigateHome={navigateHome}
-      />
-
-      {/* Main Content Router */}
-      {currentTool ? (
-          <ToolPage 
-            tool={currentTool} 
-            onBack={navigateHome} 
+  const renderContent = () => {
+    switch (currentPage) {
+      case 'tool':
+        return currentTool && (
+          <ToolPage
+            tool={currentTool}
+            onBack={navigateHome}
             onSelectCategory={(id) => {
               setActiveCategory(id);
               navigateHome();
             }}
           />
-      ) : (
-          <HomePage 
+        );
+      case 'privacy':
+        return <PrivacyPage />;
+      case 'contact':
+        return <ContactPage />;
+      case 'signin':
+        return <SignInPage />;
+      case 'signup':
+        return <SignUpPage />;
+      default:
+        return (
+          <HomePage
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             activeCategory={activeCategory}
@@ -112,9 +169,32 @@ const App: React.FC = () => {
             filteredTools={filteredTools}
             navigateToTool={navigateToTool}
           />
-      )}
+        );
+    }
+  };
 
-      <Footer onNavigateHome={navigateHome} />
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans selection:bg-primary-500/30 selection:text-primary-900">
+
+      <Header
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        currentTool={currentTool}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+        onNavigateHome={navigateHome}
+        onNavigateToSignIn={navigateToSignIn}
+        onNavigateToSignUp={navigateToSignUp}
+        isAuthenticated={isAuthenticated}
+        onSignOut={handleSignOut}
+      />
+
+      {/* Main Content Router */}
+      {renderContent()}
+
+
+      <Footer onNavigateHome={navigateHome} onNavigateToPrivacy={navigateToPrivacy} onNavigateToContact={navigateToContact} />
 
     </div>
   );
