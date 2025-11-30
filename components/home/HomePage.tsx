@@ -5,7 +5,6 @@ import { CATEGORIES } from '../../data/categories';
 import { TOOLS } from '../../data/tools-registry';
 import { FAQS } from '../../data/faqs';
 import { Tool, CategoryId } from '../../types/index';
-import Dice from './Dice';
 
 interface HomePageProps {
   searchQuery: string;
@@ -22,54 +21,38 @@ const HomePage: React.FC<HomePageProps> = ({
   return (
     <>
       {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
-            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-[120px]" />
-            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-secondary-500/10 rounded-full blur-[120px]" />
+      <section className="relative pt-24 pb-24 sm:pt-32 sm:pb-32 lg:pt-40 lg:pb-40 overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950">
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column: Content */}
               <div className="text-center lg:text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs font-medium text-primary-600 dark:text-primary-400 mb-8 animate-fade-in">
-                    <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                    </span>
-                    Over 38+ Free Tools
-                </div>
-                
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
-                  Smart Tools for Every Task
+                <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6">
+                  The Ultimate Hub of Free Online Tools
                 </h1>
                 
                 <p className="max-w-xl mx-auto lg:mx-0 text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
-                  Your one-stop suite of free, powerful online tools for AI, SEO, PDFs, and more. Boost your productivity instantly.
+                    Convert, Create, Analyze, and Optimize with our suite of 38+ powerful AI, PDF, and SEO utilities. Free, fast, and secure.
                 </p>
-
-                {/* Search Bar */}
-                <div className="max-w-lg mx-auto lg:mx-0 relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                    <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
-                    <Search className="w-6 h-6 text-slate-400 ml-3" />
-                    <input 
-                        type="text"
-                        placeholder="Search for tools..."
-                        className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
-                        Search
-                    </div>
-                    </div>
-                </div>
               </div>
               
-              {/* Right Column: 3D Dice */}
-              <div className="hidden lg:flex justify-center items-center h-full">
-                <Dice />
+              {/* Right Column: Graphic */}
+              <div className="hidden lg:flex justify-center items-center h-full relative">
+                  <div className="relative w-80 h-80 flex items-center justify-center">
+                    {/* Dashed Square */}
+                    <div className="absolute w-full h-full border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl rotate-45"></div>
+                    
+                    {/* Main Shape */}
+                    <div className="relative w-48 h-48 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/30">
+                        <div className="w-4 h-4 bg-white rounded-full"></div>
+                    </div>
+
+                    {/* Floating Dots */}
+                    <div className="absolute top-8 -left-4 w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <div className="absolute bottom-8 -right-4 w-3 h-3 bg-indigo-500 rounded-full"></div>
+                  </div>
               </div>
             </div>
           </div>
@@ -104,12 +87,30 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
       </section>
 
-      {/* Tools Grid */}
+      {/* Search and Tools Grid */}
       <section id="features" className="py-20 flex-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Introducing Our Smart AI Tools</h2>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-16">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-xl shadow-xl p-2 border border-slate-200 dark:border-slate-800">
+                <Search className="w-6 h-6 text-slate-400 ml-3" />
+                <input 
+                    type="text"
+                    placeholder="Search for tools..."
+                    className="w-full p-3 bg-transparent outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <div className="hidden sm:block px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-lg font-medium select-none">
+                    Search
+                </div>
+                </div>
+              </div>
             </div>
+
             <div className="flex items-center justify-between mb-10">
                 <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
                 {activeCategory === 'all' ? 'All Tools' : CATEGORIES.find(c => c.id === activeCategory)?.name}
