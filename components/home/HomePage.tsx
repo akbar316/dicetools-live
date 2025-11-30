@@ -153,39 +153,6 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Why Choose DiceTools?</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center p-6">
-                  <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-6 h-6 text-green-600" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2 dark:text-white">Secure & Private</h3>
-                  <p className="text-sm text-slate-500">We don't store your files. All processing happens on secure servers or your browser.</p>
-              </div>
-              <div className="text-center p-6">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-4">
-                  <Command className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2 dark:text-white">Powered by Gemini</h3>
-                  <p className="text-sm text-slate-500">Leveraging Google's advanced AI for high-quality generation and analysis.</p>
-              </div>
-              <div className="text-center p-6">
-                  <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2 dark:text-white">Lightning Fast</h3>
-                  <p className="text-sm text-slate-500">Optimized performance for instant results, even on mobile devices.</p>
-              </div>
-              </div>
-          </div>
-      </section>
-
       {/* FAQ */}
       <section id="faq" className="py-20 bg-slate-50 dark:bg-slate-950">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
