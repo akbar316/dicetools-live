@@ -1,6 +1,9 @@
+
 import React, { useState, useRef } from 'react';
 import { Scissors, Loader2, Download, AlertCircle, Upload, Trash2, UserCheck, Palette, Check, Share2 } from 'lucide-react';
 import { editImage } from '../../../lib/gemini';
+import { useAuth } from '../../../contexts/AuthContext';
+import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
 
 const HAIRSTYLES = [
   { id: 'long-wavy', label: 'Long Wavy' },
@@ -49,6 +52,12 @@ const AiHairstyleTool: React.FC = () => {
   const [input, setInput] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, loading: authLoading } = useAuth();
+
+  const navigateToSignIn = () => {
+    window.history.pushState({}, '', '/signin');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -71,11 +80,23 @@ const AiHairstyleTool: React.FC = () => {
 
   const handleGenerate = async () => {
     if (!selectedImage) { setError("Please upload a photo."); return; }
+    if (authLoading) return;
     
     const finalHairstyle = customHairstyle.trim() || selectedHairstyle;
     if (!finalHairstyle && selectedHairColors.length === 0 && !selectedBeard && !input) {
         setError("Please select at least one option.");
         return;
+    }
+
+    const toolId = 'ai-hairstyle';
+    const userId = user ? user.uid : null;
+
+    if (isAITool(toolId)) {
+      const limitReached = await checkUsageLimit(userId);
+      if (limitReached) {
+        showLimitModal(navigateToSignIn);
+        return;
+      }
     }
 
     setLoading(true);
@@ -91,8 +112,14 @@ const AiHairstyleTool: React.FC = () => {
         prompt += "Keep facial features and background identical. Make it look realistic.";
 
         const res = await editImage(selectedImage, prompt, "1:1");
-        if (res) setOutput(res);
-        else setError("Failed to generate hairstyle.");
+        if (res) {
+          setOutput(res);
+          if (isAITool(toolId)) {
+            await incrementUsage(userId);
+          }
+        } else {
+          setError("Failed to generate hairstyle.");
+        }
     } catch (err: any) {
         setError(err.message);
     } finally {
@@ -161,7 +188,7 @@ const AiHairstyleTool: React.FC = () => {
                  </div>
             </div>
 
-            <button onClick={handleGenerate} disabled={loading} className="w-full mt-8 py-4 bg-primary-600 text-white rounded-xl font-bold flex items-center justify-center gap-2">
+            <button onClick={handleGenerate} disabled={loading || authLoading || !selectedImage} className="w-full mt-8 py-4 bg-primary-600 text-white rounded-xl font-bold flex items-center justify-center gap-2">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Scissors className="w-5 h-5" />} Generate
             </button>
             {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}

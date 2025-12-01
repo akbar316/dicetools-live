@@ -1,38 +1,21 @@
+
 import React, { useState } from 'react';
 import { Wand2, Loader2, Copy, Check, AlertCircle, Languages } from 'lucide-react';
 import { Tool } from '../../../types/index';
 import { generateText } from '../../../lib/gemini';
+import { useAuth } from '../../../contexts/AuthContext';
+import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
+import { useNavigate } from 'react-router-dom';
 
 interface AiTextToolProps {
   tool: Tool;
 }
 
 const LANGUAGES = [
-  "English (Standard)",
-  "English (US)",
-  "English (UK)",
-  "Spanish",
-  "French",
-  "German",
-  "Italian",
-  "Portuguese",
-  "Dutch",
-  "Russian",
-  "Chinese",
-  "Japanese",
-  "Korean",
-  "Arabic",
-  "Hindi",
-  "Turkish",
-  "Indonesian",
-  "Urdu",
-  "Bengali",
-  "Punjabi",
-  "Marathi",
-  "Telugu",
-  "Tamil",
-  "Vietnamese",
-  "Thai"
+  "English (Standard)", "English (US)", "English (UK)", "Spanish", "French", "German", 
+  "Italian", "Portuguese", "Dutch", "Russian", "Chinese", "Japanese", "Korean", 
+  "Arabic", "Hindi", "Turkish", "Indonesian", "Urdu", "Bengali", "Punjabi", 
+  "Marathi", "Telugu", "Tamil", "Vietnamese", "Thai"
 ];
 
 const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
@@ -42,28 +25,54 @@ const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("English (Standard)");
+  
+  const { user, loading: authLoading } = useAuth();
+  
+  // This hook is for navigation, but App.tsx handles navigation.
+  // We need a way to trigger navigation from here. A callback function would be ideal.
+  // For now, let's assume there is a function `navigateToSignIn` passed down or available in context.
+  // Or we can just reload the page with a query parameter.
+  const navigateToSignIn = () => {
+    // A simple way to navigate without React Router's `useNavigate` in a class component
+    // or when the hook is not available.
+    window.history.pushState({}, '', '/signin');
+    // You might need a way to inform the main App component to re-render for the new page.
+    // A custom event could work.
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   const handleGenerate = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || authLoading) return;
+
+    const toolId = tool.id;
+    const userId = user ? user.uid : null;
+
+    if (isAITool(toolId)) {
+      const limitReached = await checkUsageLimit(userId);
+      if (limitReached) {
+        showLimitModal(navigateToSignIn);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     setOutput(null);
 
     try {
       let systemPrompt = tool.systemPrompt;
-      
-      // Enhance prompt for Grammar Fixer with language selection
       if (tool.id === 'ai-grammar') {
         systemPrompt = `${systemPrompt} Output the corrected text in ${selectedLanguage}.`;
       }
-      // Enhance prompt for Translator if needed (optional, though tool.id usually dictates behavior)
-      else if (tool.id === 'ai-translator') {
-         // The default prompt is hardcoded in registry, but we could make this dynamic too if we added a selector for translator.
-         // For now, we only apply to grammar fixer as requested.
-      }
-
+      
       const res = await generateText(input, systemPrompt);
       setOutput(res);
+
+      // Increment usage only on success
+      if (isAITool(toolId)) {
+        await incrementUsage(userId);
+      }
+
     } catch (err: any) {
       setError(err.message || "Failed to generate text.");
     } finally {
@@ -115,7 +124,7 @@ const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
 
           <button 
             onClick={handleGenerate}
-            disabled={loading || !input.trim()}
+            disabled={loading || !input.trim() || authLoading}
             className="w-full py-4 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white rounded-xl font-bold text-lg shadow-xl shadow-primary-500/25 flex items-center justify-center gap-2 transition-all transform active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (

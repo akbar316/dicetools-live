@@ -1,7 +1,9 @@
+
 import React, { useState, useRef } from 'react';
 import { Wand2, Loader2, Download, AlertCircle, Upload, Trash2, Sliders, Palette, Plus, Minus, RefreshCcw, Pencil, Share2 } from 'lucide-react';
-import { Tool } from '../../../types/index';
 import { editImage } from '../../../lib/gemini';
+import { useAuth } from '../../../contexts/AuthContext';
+import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
 
 const ASPECT_RATIOS = [
   { label: 'Square (1:1)', value: '1:1' },
@@ -40,6 +42,12 @@ const AiImageEditorTool: React.FC = () => {
   const [editReplacement, setEditReplacement] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, loading: authLoading } = useAuth();
+
+  const navigateToSignIn = () => {
+    window.history.pushState({}, '', '/signin');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,6 +71,18 @@ const AiImageEditorTool: React.FC = () => {
     if (!selectedImage) {
       setError("Please upload an image first.");
       return;
+    }
+    if (authLoading) return;
+
+    const toolId = 'ai-image-editor';
+    const userId = user ? user.uid : null;
+
+    if (isAITool(toolId)) {
+      const limitReached = await checkUsageLimit(userId);
+      if (limitReached) {
+        showLimitModal(navigateToSignIn);
+        return;
+      }
     }
     
     setLoading(true);
@@ -96,8 +116,14 @@ const AiImageEditorTool: React.FC = () => {
       }
 
       const res = await editImage(selectedImage, fullPrompt, aspectRatio);
-      if (res) setOutput(res);
-      else setError("Failed to edit image.");
+      if (res) {
+        setOutput(res);
+        if (isAITool(toolId)) {
+          await incrementUsage(userId);
+        }
+      } else {
+        setError("Failed to edit image.");
+      }
     } catch (err: any) {
       setError(err.message || "An error occurred.");
     } finally {
@@ -235,7 +261,7 @@ const AiImageEditorTool: React.FC = () => {
           
           <button 
             onClick={handleGenerate}
-            disabled={loading}
+            disabled={loading || authLoading || !selectedImage}
             className="w-full py-4 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white rounded-xl font-bold text-lg shadow-xl shadow-primary-500/25 flex items-center justify-center gap-2 transition-all transform active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
           >
              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Wand2 className="w-6 h-6" />}

@@ -1,7 +1,10 @@
+
 import React, { useState } from 'react';
 import { Wand2, Loader2, Download, AlertCircle, Sliders, Share2 } from 'lucide-react';
 import { Tool } from '../../../types/index';
 import { generateImage } from '../../../lib/gemini';
+import { useAuth } from '../../../contexts/AuthContext';
+import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
 
 interface AiImageToolProps {
   tool: Tool;
@@ -20,17 +23,41 @@ const AiImageTool: React.FC<AiImageToolProps> = ({ tool }) => {
   const [output, setOutput] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, loading: authLoading } = useAuth();
+
+  const navigateToSignIn = () => {
+    window.history.pushState({}, '', '/signin');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   const handleGenerate = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || authLoading) return;
+
+    const toolId = tool.id;
+    const userId = user ? user.uid : null;
+
+    if (isAITool(toolId)) {
+      const limitReached = await checkUsageLimit(userId);
+      if (limitReached) {
+        showLimitModal(navigateToSignIn);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     setOutput(null);
 
     try {
       const res = await generateImage(input, aspectRatio);
-      if (res) setOutput(res);
-      else setError("No image data received.");
+      if (res) {
+        setOutput(res);
+        if (isAITool(toolId)) {
+          await incrementUsage(userId);
+        }
+      } else {
+        setError("No image data received.");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to generate image.");
     } finally {
@@ -80,7 +107,7 @@ const AiImageTool: React.FC<AiImageToolProps> = ({ tool }) => {
 
           <button 
             onClick={handleGenerate}
-            disabled={loading || !input.trim()}
+            disabled={loading || !input.trim() || authLoading}
             className="w-full py-4 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white rounded-xl font-bold text-lg shadow-xl shadow-primary-500/25 flex items-center justify-center gap-2 transition-all transform active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
