@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Github, Twitter, Mail } from 'lucide-react';
 
 interface FooterProps {
   onNavigateHome: () => void;
@@ -45,9 +44,6 @@ const Footer: React.FC<FooterProps> = ({ onNavigateHome, onNavigateToPrivacy, on
             <h4 className="font-bold text-slate-900 dark:text-white mb-4">Connect</h4>
             <ul className="space-y-2 text-sm text-slate-500 dark:text-slate-400">
               <li><button onClick={onNavigateToContact} className="hover:text-primary-600">Contact</button></li>
-              <li><a href="#" className="text-slate-400 hover:text-primary-600"><Twitter className="w-5 h-5" /></a></li>
-              <li><a href="#" className="text-slate-400 hover:text-primary-600"><Github className="w-5 h-5" /></a></li>
-              <li><a href="#" className="text-slate-400 hover:text-primary-600"><Mail className="w-5 h-5" /></a></li>
             </ul>
           </div>
         </div>
