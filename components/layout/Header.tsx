@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Menu, Moon, Sun, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Menu, Moon, Sun, LogIn, UserPlus, LogOut, DollarSign } from 'lucide-react';
 import { Tool } from '../../types/index';
 
 interface HeaderProps {
@@ -12,6 +12,7 @@ interface HeaderProps {
   onNavigateHome: () => void;
   onNavigateToSignIn: () => void;
   onNavigateToSignUp: () => void;
+  onNavigateToPricing: () => void;
   isAuthenticated: boolean;
   onSignOut: () => void;
 }
@@ -25,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({
   onNavigateHome,
   onNavigateToSignIn,
   onNavigateToSignUp,
+  onNavigateToPricing,
   isAuthenticated,
   onSignOut
 }) => {
@@ -49,6 +51,7 @@ const Header: React.FC<HeaderProps> = ({
                   <div className="flex items-center gap-8">
                     <a href="#categories" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">Categories</a>
                     <a href="#features" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">Featured</a>
+                    <button onClick={onNavigateToPricing} className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">Pricing</button>
                     <a href="#faq" className="text-sm font-medium text-slate-600 hover:text-primary-600 dark:text-slate-400 dark:hover:text-white transition-colors">FAQ</a>
                   </div>
               )}
@@ -104,6 +107,10 @@ const Header: React.FC<HeaderProps> = ({
                 <>
                     <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">Categories</a>
                     <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">All Tools</a>
+                    <button onClick={() => { onNavigateToPricing(); setMobileMenuOpen(false); }} className="w-full text-left flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                        <DollarSign className="w-4 h-4" />
+                        Pricing
+                    </button>
                     <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 dark:text-slate-300 font-medium">FAQ</a>
                     <hr className="border-slate-200 dark:border-slate-800"/>
                 </>

@@ -5,10 +5,10 @@ import { Tool } from '../../../types/index';
 import { generateText } from '../../../lib/gemini';
 import { useAuth } from '../../../contexts/AuthContext';
 import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
-import { useNavigate } from 'react-router-dom';
 
 interface AiTextToolProps {
   tool: Tool;
+  onNavigateToPricing: () => void;
 }
 
 const LANGUAGES = [
@@ -18,7 +18,7 @@ const LANGUAGES = [
   "Marathi", "Telugu", "Tamil", "Vietnamese", "Thai"
 ];
 
-const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
+const AiTextTool: React.FC<AiTextToolProps> = ({ tool, onNavigateToPricing }) => {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,19 +27,6 @@ const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("English (Standard)");
   
   const { user, loading: authLoading } = useAuth();
-  
-  // This hook is for navigation, but App.tsx handles navigation.
-  // We need a way to trigger navigation from here. A callback function would be ideal.
-  // For now, let's assume there is a function `navigateToSignIn` passed down or available in context.
-  // Or we can just reload the page with a query parameter.
-  const navigateToSignIn = () => {
-    // A simple way to navigate without React Router's `useNavigate` in a class component
-    // or when the hook is not available.
-    window.history.pushState({}, '', '/signin');
-    // You might need a way to inform the main App component to re-render for the new page.
-    // A custom event could work.
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
 
   const handleGenerate = async () => {
     if (!input.trim() || authLoading) return;
@@ -50,7 +37,7 @@ const AiTextTool: React.FC<AiTextToolProps> = ({ tool }) => {
     if (isAITool(toolId)) {
       const limitReached = await checkUsageLimit(userId);
       if (limitReached) {
-        showLimitModal(navigateToSignIn);
+        showLimitModal(onNavigateToPricing);
         return;
       }
     }

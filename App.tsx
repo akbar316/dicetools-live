@@ -15,6 +15,7 @@ const SignInPage = lazy(() => import('./components/auth/SignInPage'));
 const SignUpPage = lazy(() => import('./components/auth/SignUpPage'));
 const ForgotPasswordPage = lazy(() => import('./components/auth/ForgotPasswordPage'));
 const CookiePolicyPage = lazy(() => import('./components/legal/CookiePolicyPage'));
+const PricingPage = lazy(() => import('./components/pricing/PricingPage'));
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -42,6 +43,8 @@ const App: React.FC = () => {
       setCurrentPage('forgot-password');
     } else if (page === 'cookie-policy') {
       setCurrentPage('cookie-policy');
+    } else if (page === 'pricing') {
+      setCurrentPage('pricing');
     } else if (toolId) {
       const tool = TOOLS.find(t => t.id === toolId);
       if (tool) {
@@ -75,6 +78,9 @@ const App: React.FC = () => {
       } else if (page === 'cookie-policy') {
         setCurrentPage('cookie-policy');
         setCurrentTool(null);
+      } else if (page === 'pricing') {
+        setCurrentPage('pricing');
+        setCurrentTool(null);
       } else if (toolId) {
         const tool = TOOLS.find(t => t.id === toolId);
         if (tool) {
@@ -106,6 +112,8 @@ const App: React.FC = () => {
       document.title = 'Forgot Password - Dicetools.online';
     } else if (currentPage === 'cookie-policy') {
       document.title = 'Cookie Policy - Dicetools.online';
+    } else if (currentPage === 'pricing') {
+      document.title = 'Pricing - Dicetools.online';
     } else {
       document.title = 'Dicetools.online - Smart Tools for Everything';
     }
@@ -141,6 +149,7 @@ const App: React.FC = () => {
   const navigateToSignUp = () => navigateTo('signup');
   const navigateToForgotPassword = () => navigateTo('forgot-password');
   const navigateToCookiePolicy = () => navigateTo('cookie-policy');
+  const navigateToPricing = () => navigateTo('pricing');
   const handleSignOut = () => {
     signOut();
     navigateHome();
@@ -173,6 +182,7 @@ const App: React.FC = () => {
           <ToolPage
             tool={currentTool}
             onBack={navigateHome}
+            onNavigateToPricing={navigateToPricing}
             onSelectCategory={(id) => {
               setActiveCategory(id);
               navigateHome();
@@ -185,6 +195,8 @@ const App: React.FC = () => {
         return <ContactPage />;
       case 'cookie-policy':
         return <CookiePolicyPage />;
+      case 'pricing':
+        return <PricingPage />;
       case 'signin':
         return (
           <SignInPage
@@ -222,6 +234,7 @@ const App: React.FC = () => {
         onNavigateHome={navigateHome}
         onNavigateToSignIn={navigateToSignIn}
         onNavigateToSignUp={navigateToSignUp}
+        onNavigateToPricing={navigateToPricing}
         isAuthenticated={isAuthenticated}
         onSignOut={handleSignOut}
       />

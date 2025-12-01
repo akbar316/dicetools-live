@@ -34,9 +34,10 @@ interface ToolPageProps {
   tool: Tool;
   onBack: () => void;
   onSelectCategory: (id: CategoryId) => void;
+  onNavigateToPricing: () => void;
 }
 
-const ToolPage: React.FC<ToolPageProps> = ({ tool, onBack, onSelectCategory }) => {
+const ToolPage: React.FC<ToolPageProps> = ({ tool, onBack, onSelectCategory, onNavigateToPricing }) => {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ tool, onBack, onSelectCategory }) =
     // 2. Action Types (AI & Complex Tools)
     switch (tool.actionType) {
       case 'ai-text':
-        return <AiTextTool tool={tool} />;
+        return <AiTextTool tool={tool} onNavigateToPricing={onNavigateToPricing} />;
       case 'ai-image':
         return <AiImageTool tool={tool} />;
       case 'ai-image-edit':
