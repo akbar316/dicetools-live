@@ -1,22 +1,46 @@
-import React, { useState, useRef } from 'react';
-import { FileText, Loader2, Download, AlertCircle, Upload, Check } from 'lucide-react';
-import { processPdf } from '../../../lib/gemini';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { FileText, Loader2, Download, AlertCircle, Check } from 'lucide-react';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Since this is Vite, we need to manually copy the worker to the public directory
+// and then reference it. Let's assume it's in `/pdf.worker.min.js`.
+// You must copy `node_modules/pdfjs-dist/build/pdf.worker.min.js` to your `public` folder.
+const PDF_WORKER_SRC = '/pdf.worker.min.js';
 
 const PdfToWordTool: React.FC = () => {
   const [output, setOutput] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<{name: string, data: string} | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_SRC;
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.type !== 'application/pdf') { setError("Only PDF files allowed."); return; }
-      if (file.size > 10 * 1024 * 1024) { setError("Max file size is 10MB."); return; }
-      const reader = new FileReader();
-      reader.onloadend = () => setSelectedFile({ name: file.name, data: reader.result as string });
-      reader.readAsDataURL(file);
+      if (file.type !== 'application/pdf') {
+        setError("Only PDF files are allowed.");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        setError("Max file size is 10MB.");
+        return;
+      }
+      setSelectedFile(file);
+      setError(null);
+    }
+  };
+
+  const handleReset = () => {
+    setOutput(null);
+    setSelectedFile(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -24,18 +48,56 @@ const PdfToWordTool: React.FC = () => {
     if (!selectedFile) return;
     setLoading(true);
     setError(null);
+    setOutput(null);
+
     try {
-        const html = await processPdf(selectedFile.data);
-        const wordContent = `
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          if (!arrayBuffer) {
+            throw new Error("Failed to read the file.");
+          }
+
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let fullText = '';
+
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            // Use 'str' property and provide a fallback for items that might not have it.
+            const pageText = textContent.items.map(item => ('str' in item ? item.str : '')).join(' ');
+            fullText += pageText + '\n\n';
+          }
+
+          // Sanitize text and wrap in a basic HTML structure for the .doc file
+          const wordContent = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head><meta charset='utf-8'><title>Doc</title></head><body>${html}</body></html>
-        `;
-        const blob = new Blob([wordContent], { type: 'application/msword' });
-        setOutput(URL.createObjectURL(blob));
+            <head><meta charset='utf-8'><title>Converted Document</title></head>
+            <body>
+                <pre>${fullText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+            </body>
+            </html>
+          `;
+          const blob = new Blob([wordContent], { type: 'application/msword' });
+          setOutput(URL.createObjectURL(blob));
+
+        } catch (err: any) {
+          console.error("Error processing PDF:", err);
+          setError(`Failed to process PDF. The file might be corrupt or in an unsupported format. Error: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      };
+      reader.onerror = () => {
+         setError("Error reading the selected file.");
+         setLoading(false);
+      }
+      reader.readAsArrayBuffer(selectedFile);
+
     } catch (err: any) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
+      setError(`An unexpected error occurred: ${err.message}`);
+      setLoading(false);
     }
   };
 
@@ -61,7 +123,7 @@ const PdfToWordTool: React.FC = () => {
                                         <p className="text-sm text-slate-500">Ready to convert</p>
                                     </div>
                                 </div>
-                                <button onClick={() => { setSelectedFile(null); if(fileInputRef.current) fileInputRef.current.value=''; }} className="text-red-500 hover:text-red-700 font-medium">Remove</button>
+                                <button onClick={handleReset} className="text-red-500 hover:text-red-700 font-medium">Remove</button>
                             </div>
                         )}
                         <input type="file" ref={fileInputRef} className="hidden" accept="application/pdf" onChange={handleFileChange} />
@@ -82,10 +144,10 @@ const PdfToWordTool: React.FC = () => {
                      <p className="text-slate-500 mb-8">Your document is ready for download.</p>
                      
                      <div className="flex gap-4">
-                        <a href={output} download={`${selectedFile?.name.replace('.pdf', '')}.doc`} className="py-4 px-8 bg-primary-600 text-white rounded-xl font-bold shadow-lg flex items-center gap-2 hover:bg-primary-700 transition-colors">
+                        <a href={output} download={selectedFile?.name.replace(/\.pdf$/i, '.doc')} className="py-4 px-8 bg-primary-600 text-white rounded-xl font-bold shadow-lg flex items-center gap-2 hover:bg-primary-700 transition-colors">
                             <Download className="w-5 h-5" /> Download Word File
                         </a>
-                        <button onClick={() => { setOutput(null); setSelectedFile(null); }} className="py-4 px-8 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold hover:bg-slate-200 transition-colors">
+                        <button onClick={handleReset} className="py-4 px-8 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold hover:bg-slate-200 transition-colors">
                             Convert Another
                         </button>
                      </div>
