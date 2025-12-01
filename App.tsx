@@ -1,18 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { TOOLS } from './data/tools-registry';
 import { Tool, CategoryId } from './types/index';
-import ToolPage from './components/tools/ToolPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import HomePage from './components/home/HomePage';
-import PrivacyPage from './components/PrivacyPage';
-import ContactPage from './components/ContactPage';
-import SignInPage from './components/auth/SignInPage';
-import SignUpPage from './components/auth/SignUpPage';
-import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
 import { useAuth } from './contexts/AuthContext';
-import CookiePolicyPage from './components/legal/CookiePolicyPage';
+
+// Lazy-loaded components
+const HomePage = lazy(() => import('./components/home/HomePage'));
+const ToolPage = lazy(() => import('./components/tools/ToolPage'));
+const PrivacyPage = lazy(() => import('./components/PrivacyPage'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
+const SignInPage = lazy(() => import('./components/auth/SignInPage'));
+const SignUpPage = lazy(() => import('./components/auth/SignUpPage'));
+const ForgotPasswordPage = lazy(() => import('./components/auth/ForgotPasswordPage'));
+const CookiePolicyPage = lazy(() => import('./components/legal/CookiePolicyPage'));
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -223,7 +225,9 @@ const App: React.FC = () => {
         isAuthenticated={isAuthenticated}
         onSignOut={handleSignOut}
       />
-      {renderContent()}
+      <Suspense fallback={<div className="flex-grow flex items-center justify-center"><div className="w-16 h-16 border-4 border-primary-500 border-dashed rounded-full animate-spin"></div></div>}>
+        {renderContent()}
+      </Suspense>
       <Footer 
         onNavigateHome={navigateHome} 
         onNavigateToPrivacy={navigateToPrivacy} 
