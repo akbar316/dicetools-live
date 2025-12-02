@@ -1,6 +1,5 @@
-
 import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from '../firebase';
 
 const AI_TOOLS = [
   'ai-image-gen',
