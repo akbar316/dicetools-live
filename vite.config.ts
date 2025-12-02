@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+
 import react from '@vitejs/plugin-react';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -17,5 +18,9 @@ export default defineConfig({
   ],
   build: {
     chunkSizeWarningLimit: 1000,
+  },
+  test: {
+    environment: 'happy-dom',
+    setupFiles: './tests/setup.ts',
   },
 });

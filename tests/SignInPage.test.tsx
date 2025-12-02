@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import SignInPage from '../components/auth/SignInPage';
 import { AuthProvider } from '../contexts/AuthContext';
