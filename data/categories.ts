@@ -1,14 +1,33 @@
-import {
-  BrainCircuit, FileText, Type, Code2, GraduationCap, Search, Settings
-} from 'lucide-react';
-import { Category } from '../types/index';
 
-export const CATEGORIES: Category[] = [
-  { id: 'ai', name: 'AI Tools', description: 'Generate & Edit with AI', icon: BrainCircuit, color: 'text-purple-500' },
-  { id: 'pdf', name: 'PDF Tools', description: 'Manage Documents', icon: FileText, color: 'text-red-500' },
-  { id: 'text', name: 'Text Tools', description: 'Write & Format', icon: Type, color: 'text-blue-500' },
-  { id: 'dev', name: 'Developer', description: 'Code & Debug', icon: Code2, color: 'text-green-500' },
-  { id: 'student', name: 'Student', description: 'Study Helpers', icon: GraduationCap, color: 'text-yellow-500' },
-  { id: 'seo', name: 'SEO Tools', description: 'Optimize Ranking', icon: Search, color: 'text-orange-500' },
-  { id: 'utility', name: 'Utilities', description: 'Everyday Tools', icon: Settings, color: 'text-gray-500' },
+export const categories = [
+  {
+    id: 'calculators',
+    name: '🔢 Basic calculators / converters / math & date utilities',
+    description: 'A collection of basic calculators and converters for everyday use.',
+  },
+  {
+    id: 'text-tools',
+    name: '✍️ Text & Content Tools',
+    description: 'Tools for text manipulation, formatting, and analysis.',
+  },
+  {
+    id: 'image-tools',
+    name: '🖼️ Image / Media / File Tools',
+    description: 'Tools for image and file manipulation.',
+  },
+  {
+    id: 'utility-tools',
+    name: '🔐 Utility / Security / Generator Tools',
+    description: 'A collection of utility, security, and generator tools.',
+  },
+  {
+    id: 'developer-tools',
+    name: '💻 Developer / Coding / Data Tools',
+    description: 'Tools for developers and coders.',
+  },
+  {
+    id: 'misc-tools',
+    name: '📄 Misc / Productivity / Everyday Tools',
+    description: 'A collection of miscellaneous tools for productivity and everyday use.',
+  },
 ];
