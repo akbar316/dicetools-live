@@ -11,7 +11,7 @@ const getAIClient = () => {
 export const generateText = async (prompt: string, systemInstruction?: string): Promise<string> => {
   try {
     const ai = getAIClient();
-    const modelId = "gemini-2.5-flash"; 
+    const modelId = "gemini-1.5-flash"; 
     
     const response = await ai.models.generateContent({
       model: modelId,
@@ -29,15 +29,46 @@ export const generateText = async (prompt: string, systemInstruction?: string): 
 };
 
 export const generateImage = async (prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
-  // Return a static placeholder image for local development
-  const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0ibGlnaHRncmF5Ii8+PHRleHQgeD0iNTAiIHk9IjU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiI+UGxhY2Vob2xkZXI8L3RleHQ+PC9zdmc+';
-  return Promise.resolve(placeholderImage);
+    try {
+    const ai = getAIClient();
+    const modelId = "gemini-1.5-flash-image";
+
+    const response = await ai.models.generateContent({
+      model: modelId,
+      contents: {
+        parts: [
+          { text: prompt },
+        ],
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: aspectRatio
+        }
+      }
+    });
+
+    const parts = response.candidates?.[0]?.content?.parts;
+    if (parts) {
+      for (const part of parts) {
+        if (part.inlineData) {
+          const resMimeType = part.inlineData.mimeType || 'image/png';
+          const resData = part.inlineData.data;
+          return `data:${resMimeType};base64,${resData}`;
+        }
+      }
+    }
+    return null;
+
+  } catch (error) {
+     console.error("Gemini Image Generation Error:", error);
+     throw new Error("Failed to generate image.");
+  }
 };
 
 export const editImage = async (imageFileBase64: string, prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
   try {
     const ai = getAIClient();
-    const modelId = "gemini-2.5-flash-image";
+    const modelId = "gemini-1.5-flash-image";
     
     const matches = imageFileBase64.match(/^data:(.+);base64,(.+)$/);
     if (!matches) {
@@ -89,7 +120,7 @@ export const editImage = async (imageFileBase64: string, prompt: string, aspectR
 export const processPdf = async (pdfBase64: string): Promise<string> => {
     try {
         const ai = getAIClient();
-        const modelId = "gemini-2.5-flash"; 
+        const modelId = "gemini-1.5-flash"; 
 
         const matches = pdfBase64.match(/^data:(.+);base64,(.+)$/);
         if (!matches) {
