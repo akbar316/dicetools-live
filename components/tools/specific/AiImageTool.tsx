@@ -57,8 +57,17 @@ const AiImageTool: React.FC<AiImageToolProps> = ({ tool }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to generate image.");
+        // The response is not ok (e.g., 500, 404). Try to get more info.
+        const errorText = await response.text();
+        console.error("Server error response:", errorText);
+        try {
+          // It might still be a JSON error response
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.message || `Request failed with status ${response.status}`);
+        } catch (e) {
+          // If parsing as JSON fails, it's likely an HTML error page or plain text.
+          throw new Error(`An unexpected server error occurred. (Status: ${response.status})`);
+        }
       }
 
       const data = await response.json();
@@ -69,10 +78,17 @@ const AiImageTool: React.FC<AiImageToolProps> = ({ tool }) => {
           await incrementUsage(userId);
         }
       } else {
-        setError("No image data received.");
+        setError("No image data received from the server.");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to generate image.");
+      // Catches network errors, parsing errors, and thrown errors from the response block
+      console.error("Image generation client-side error:", err);
+      // Avoid showing "Unexpected token 'T', "The page c"... is not valid JSON"
+      if (err instanceof SyntaxError) {
+          setError("Failed to parse server response. See console for details.");
+      } else {
+          setError(err.message || "An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
