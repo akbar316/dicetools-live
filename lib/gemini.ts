@@ -8,20 +8,23 @@ const getAIClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+// Helper function to convert base64 to a FilePart
+function fileToGenerativePart(base64: string, mimeType: string) {
+    return {
+      inlineData: {
+        data: base64,
+        mimeType
+      },
+    };
+  }
+
 export const generateText = async (prompt: string, systemInstruction?: string): Promise<string> => {
   try {
     const ai = getAIClient();
-    const modelId = "gemini-1.5-flash"; 
-    
-    const response = await ai.models.generateContent({
-      model: modelId,
-      contents: prompt,
-      config: {
-        systemInstruction: systemInstruction,
-      },
-    });
-
-    return response.text || "No response generated.";
+    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
   } catch (error) {
     console.error("Gemini Text Error:", error);
     throw new Error("Failed to generate text. Please try again.");
@@ -29,24 +32,11 @@ export const generateText = async (prompt: string, systemInstruction?: string): 
 };
 
 export const generateImage = async (prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
-    try {
+  try {
     const ai = getAIClient();
-    const modelId = "gemini-1.5-flash-image";
-
-    const response = await ai.models.generateContent({
-      model: modelId,
-      contents: {
-        parts: [
-          { text: prompt },
-        ],
-      },
-      config: {
-        imageConfig: {
-          aspectRatio: aspectRatio
-        }
-      }
-    });
-
+    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
     const parts = response.candidates?.[0]?.content?.parts;
     if (parts) {
       for (const part of parts) {
@@ -68,8 +58,8 @@ export const generateImage = async (prompt: string, aspectRatio: string = "1:1")
 export const editImage = async (imageFileBase64: string, prompt: string, aspectRatio: string = "1:1"): Promise<string | null> => {
   try {
     const ai = getAIClient();
-    const modelId = "gemini-1.5-flash-image";
-    
+    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     const matches = imageFileBase64.match(/^data:(.+);base64,(.+)$/);
     if (!matches) {
         throw new Error("Invalid image data");
@@ -77,28 +67,10 @@ export const editImage = async (imageFileBase64: string, prompt: string, aspectR
     const mimeType = matches[1];
     const data = matches[2];
 
-    const response = await ai.models.generateContent({
-      model: modelId,
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: data,
-            },
-          },
-          {
-            text: prompt,
-          },
-        ],
-      },
-      config: {
-        imageConfig: {
-          aspectRatio: aspectRatio
-        }
-      }
-    });
+    const imagePart = fileToGenerativePart(data, mimeType);
 
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
     const parts = response.candidates?.[0]?.content?.parts;
     if (parts) {
       for (const part of parts) {
@@ -120,7 +92,7 @@ export const editImage = async (imageFileBase64: string, prompt: string, aspectR
 export const processPdf = async (pdfBase64: string): Promise<string> => {
     try {
         const ai = getAIClient();
-        const modelId = "gemini-1.5-flash"; 
+        const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const matches = pdfBase64.match(/^data:(.+);base64,(.+)$/);
         if (!matches) {
@@ -129,25 +101,13 @@ export const processPdf = async (pdfBase64: string): Promise<string> => {
         const mimeType = matches[1];
         const data = matches[2];
         const finalMime = mimeType === 'application/octet-stream' ? 'application/pdf' : mimeType;
+        
+        const pdfPart = fileToGenerativePart(data, finalMime);
+        const prompt = "Extract all content from this PDF and format it as clean HTML. Preserve headings, paragraphs, lists, and tables. Do not include markdown code blocks, just return raw HTML.";
 
-        const response = await ai.models.generateContent({
-            model: modelId,
-            contents: {
-                parts: [
-                    {
-                        inlineData: {
-                            mimeType: finalMime,
-                            data: data
-                        }
-                    },
-                    {
-                        text: "Extract all content from this PDF and format it as clean HTML. Preserve headings, paragraphs, lists, and tables. Do not include markdown code blocks, just return raw HTML."
-                    }
-                ]
-            }
-        });
-
-        let text = response.text || "";
+        const result = await model.generateContent([prompt, pdfPart]);
+        const response = await result.response;
+        let text = response.text();
         text = text.replace(/```html/g, '').replace(/```/g, '');
         return text;
 
@@ -155,4 +115,4 @@ export const processPdf = async (pdfBase64: string): Promise<string> => {
         console.error("Gemini PDF Error:", error);
         throw new Error("Failed to process PDF.");
     }
-}
+};
