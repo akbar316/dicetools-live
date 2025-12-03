@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Wand2, Loader2, Download, AlertCircle, Sliders, Share2 } from 'lucide-react';
 import { Tool } from '../../../types/index';
-import { generateImage } from '../../../lib/gemini';
 import { useAuth } from '../../../contexts/AuthContext';
 import { isAITool, checkUsageLimit, incrementUsage, showLimitModal } from '../../../lib/usageManager';
 
@@ -49,9 +48,23 @@ const AiImageTool: React.FC<AiImageToolProps> = ({ tool }) => {
     setOutput(null);
 
     try {
-      const res = await generateImage(input, aspectRatio);
-      if (res) {
-        setOutput(res);
+      const response = await fetch('/api/ai/image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: input, aspectRatio }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to generate image.");
+      }
+
+      const data = await response.json();
+      
+      if (data.image) {
+        setOutput(data.image);
         if (isAITool(toolId)) {
           await incrementUsage(userId);
         }
