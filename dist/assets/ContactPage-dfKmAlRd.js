@@ -1,1 +1,0 @@
-import{j as t}from"./index-Dgykt2cV.js";const c=()=>t.jsxs("div",{className:"container mx-auto px-4 py-8",children:[t.jsx("h1",{className:"text-3xl font-bold mb-4",children:"Contact Us"}),t.jsx("p",{children:"You can contact us at contact@example.com."})]});export{c as default};
